@@ -29,7 +29,7 @@ features = {
     "risk_assessment": st.sidebar.checkbox("Risk Assessment"),
     "severity_detection": st.sidebar.checkbox("Severity Detection"),
     "critical_keywords": st.sidebar.checkbox("Critical Keyword Identification"),
-    "export": st.sidebar.checkbox("Export Options"),  # Add export checkbox
+    "export": st.sidebar.checkbox("Export Options"),
 }
 
 # Input Email Section
@@ -48,7 +48,7 @@ def get_ai_response(prompt, email_content):
         st.error(f"Error: {e}")
         return ""
 
-# Simple Sentiment Analysis (based on keyword matching)
+# Sentiment Analysis
 def get_sentiment(email_content):
     positive_keywords = ["happy", "good", "great", "excellent", "love"]
     negative_keywords = ["sad", "bad", "hate", "angry", "disappointed"]
@@ -60,7 +60,7 @@ def get_sentiment(email_content):
             sentiment_score -= 1
     return sentiment_score
 
-# Simple Grammar Check (basic spelling correction)
+# Grammar Check (basic spelling correction)
 def grammar_check(text):
     corrections = {
         "recieve": "receive",
@@ -72,12 +72,12 @@ def grammar_check(text):
         text = text.replace(word, correct)
     return text
 
-# Basic Key Phrase Extraction (Using regex to find phrases like 'actionable item')
+# Key Phrase Extraction
 def extract_key_phrases(text):
     key_phrases = re.findall(r"\b[A-Za-z]{4,}\b", text)
     return list(set(key_phrases))  # Remove duplicates
 
-# Word Cloud Generation (Using simple word frequency count)
+# Word Cloud Generation
 def generate_wordcloud(text):
     word_counts = {}
     for word in text.split():
@@ -97,19 +97,17 @@ def export_pdf(text):
     pdf.multi_cell(0, 10, text)
     return pdf.output(dest='S').encode('latin1')
 
-# Actionable Items Extraction (Look for common action phrases)
+# Actionable Items Extraction
 def extract_actionable_items(text):
     actions = [line for line in text.split("\n") if "to" in line.lower() or "action" in line.lower()]
     return actions
 
 # Root Cause Detection
 def detect_root_cause(text):
-    # Placeholder simple logic for root cause detection
     return "Possible root cause: Lack of clear communication in the process."
 
 # Culprit Identification
 def identify_culprit(text):
-    # Placeholder logic for culprit identification
     if "manager" in text.lower():
         return "Culprit: The manager might be responsible."
     elif "team" in text.lower():
@@ -118,17 +116,14 @@ def identify_culprit(text):
 
 # Trend Analysis
 def analyze_trends(text):
-    # Placeholder for trend analysis
     return "Trend detected: Delay in project timelines."
 
 # Risk Assessment
 def assess_risk(text):
-    # Placeholder for risk analysis
     return "Risk assessment: High risk due to delayed communication."
 
 # Severity Detection
 def detect_severity(text):
-    # Placeholder for severity detection
     if "urgent" in text.lower():
         return "Severity: High"
     return "Severity: Normal"
@@ -225,12 +220,25 @@ if email_content and st.button("Generate Insights"):
             st.subheader("Critical Keywords Identified")
             st.write(critical_terms)
 
+        # Prepare content for export
+        export_content = (
+            f"Summary:\n{summary}\n\n"
+            f"Response:\n{response}\n\n"
+            f"Highlights:\n{highlights}\n\n"
+            f"Sentiment Analysis: {sentiment_label} (Score: {sentiment})\n\n"
+            f"Root Cause: {root_cause}\n\n"
+            f"Culprit Identification: {culprit}\n\n"
+            f"Trend Analysis: {trends}\n\n"
+            f"Risk Assessment: {risk}\n\n"
+            f"Severity: {severity}\n\n"
+            f"Critical Keywords: {', '.join(critical_terms)}\n"
+        )
+
         # Export options - Only show if export is enabled
         if features["export"]:
-            export_text = f"Summary:\n{summary}\n\nResponse:\n{response}\n\nHighlights:\n{highlights}"
-            pdf_buffer = BytesIO(export_pdf(export_text))
-            buffer_txt = BytesIO(export_text.encode("utf-8"))
-            buffer_json = BytesIO(json.dumps({"summary": summary, "response": response, "highlights": highlights}, indent=4).encode("utf-8"))
+            pdf_buffer = BytesIO(export_pdf(export_content))
+            buffer_txt = BytesIO(export_content.encode("utf-8"))
+            buffer_json = BytesIO(json.dumps({"summary": summary, "response": response, "highlights": highlights, "sentiment": sentiment_label, "root_cause": root_cause, "culprit": culprit, "trends": trends, "risk": risk, "severity": severity, "critical_keywords": critical_terms}, indent=4).encode("utf-8"))
 
             st.download_button("Download as Text", data=buffer_txt, file_name="analysis.txt", mime="text/plain")
             st.download_button("Download as PDF", data=pdf_buffer, file_name="analysis.pdf", mime="application/pdf")
