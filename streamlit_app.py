@@ -1,5 +1,4 @@
 import streamlit as st
-import google.generativeai as genai
 from langdetect import detect
 from googletrans import Translator
 from io import BytesIO
@@ -9,13 +8,9 @@ import json
 import time
 from textblob import TextBlob
 import pandas as pd
-from transformers import pipeline
 from wordcloud import WordCloud
 import matplotlib.pyplot as plt
 from datetime import datetime, timedelta
-
-# Configure API Key securely from Streamlit's secrets
-genai.configure(api_key=st.secrets["GOOGLE_API_KEY"])
 
 # App Configuration
 st.set_page_config(page_title="Fast Email Storytelling AI", page_icon="", layout="wide")
@@ -45,9 +40,8 @@ MAX_EMAIL_LENGTH = 1000
 @st.cache_data(ttl=3600)
 def get_ai_response(prompt, email_content):
     try:
-        model = genai.GenerativeModel("gemini-1.5-flash")
-        response = model.generate_content(prompt + email_content[:MAX_EMAIL_LENGTH])
-        return response.text.strip()
+        # Simulating response generation without external dependencies
+        return "Simulated AI response for the email content."
     except Exception as e:
         st.error(f"Error: {e}")
         return ""
@@ -56,12 +50,17 @@ def get_ai_response(prompt, email_content):
 def get_sentiment(email_content):
     return TextBlob(email_content).sentiment.polarity
 
-# Tone Analysis using Hugging Face
-tone_analyzer = pipeline("zero-shot-classification", model="facebook/bart-large-mnli")
-
+# Tone Analysis (Simplified Approach)
 def analyze_tone(text):
-    candidate_labels = ["Formal", "Friendly", "Aggressive", "Neutral"]
-    return tone_analyzer(text, candidate_labels)
+    formal_keywords = ['Dear', 'Sincerely', 'Best regards']
+    friendly_keywords = ['Hi', 'Hello', 'Thanks', 'Cheers']
+    tone = "Neutral"
+
+    if any(keyword in text for keyword in formal_keywords):
+        tone = "Formal"
+    elif any(keyword in text for keyword in friendly_keywords):
+        tone = "Friendly"
+    return tone
 
 # PDF Export
 def export_pdf(text):
@@ -174,7 +173,7 @@ if email_content and st.button("Generate Insights"):
 
             if features["tone_analysis"]:
                 st.subheader("Tone Analysis")
-                st.write(f"Detected Tone: {tone['labels'][0]} (Confidence: {tone['scores'][0]:.2f})")
+                st.write(f"Detected Tone: {tone}")
 
             if features["emotional_impact"]:
                 st.subheader("Emotional Impact")
@@ -208,7 +207,7 @@ if email_content and st.button("Generate Insights"):
                     "response": response,
                     "highlights": highlights,
                     "sentiment": sentiment_label if features["sentiment"] else None,
-                    "tone": tone['labels'][0] if tone else None,
+                    "tone": tone if tone else None,
                     "emotional_impact": emotional_impact if emotional_impact else None,
                 }
 
@@ -222,11 +221,8 @@ if email_content and st.button("Generate Insights"):
                 st.download_button("Download as PDF", data=pdf_buffer, file_name="analysis.pdf", mime="application/pdf")
                 st.download_button("Download as CSV", data=buffer_csv, file_name="analysis.csv", mime="text/csv")
 
-            # Word Cloud Visualization
-            if features["highlights"]:
-                wordcloud = generate_word_cloud(translated_email)
-                st.subheader("Word Cloud of Email Content")
-                st.pyplot(wordcloud)
-
     except Exception as e:
-        st.error(f"An error occurred: {e}")
+        st.error(f"Error: {e}")
+
+else:
+    st.info("Paste email content and click 'Generate Insights' to start.")
