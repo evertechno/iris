@@ -8,3 +8,4 @@ transformers
 wordcloud 
 matplotlib 
 pandas
+tensorflow
