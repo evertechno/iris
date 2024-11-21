@@ -1,12 +1,7 @@
 streamlit
-google-generativeai 
-langdetect 
 googletrans 
 fpdf 
 textblob 
-transformers 
 wordcloud 
 matplotlib 
 pandas
-tensorflow
-tf-keras
