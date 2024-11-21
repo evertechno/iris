@@ -9,7 +9,7 @@ import re
 genai.configure(api_key=st.secrets["GOOGLE_API_KEY"])
 
 # App Configuration
-st.set_page_config(page_title="Email Insights AI", page_icon="📧", layout="wide")
+st.set_page_config(page_title="Escalytics by EverTech", page_icon="📧", layout="wide")
 st.title("⚡ Email Insights and RCA AI")
 st.write("Extract insights, root causes, and actionable steps from emails.")
 
