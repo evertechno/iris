@@ -5,3 +5,4 @@ textblob
 wordcloud 
 matplotlib 
 pandas
+langdetect
