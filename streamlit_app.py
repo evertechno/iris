@@ -10,7 +10,7 @@ genai.configure(api_key=st.secrets["GOOGLE_API_KEY"])
 
 # App Configuration
 st.set_page_config(page_title="Escalytics", page_icon="📧", layout="wide")
-st.title("⚡Escalytics by EverTechI")
+st.title("⚡Escalytics by EverTech")
 st.write("Extract insights, root causes, and actionable steps from emails.")
 
 # Sidebar for Features
