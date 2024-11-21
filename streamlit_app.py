@@ -29,6 +29,7 @@ features = {
     "risk_assessment": st.sidebar.checkbox("Risk Assessment"),
     "severity_detection": st.sidebar.checkbox("Severity Detection"),
     "critical_keywords": st.sidebar.checkbox("Critical Keyword Identification"),
+    "export": st.sidebar.checkbox("Export Options"),  # Add export checkbox
 }
 
 # Input Email Section
@@ -224,7 +225,7 @@ if email_content and st.button("Generate Insights"):
             st.subheader("Critical Keywords Identified")
             st.write(critical_terms)
 
-        # Export options
+        # Export options - Only show if export is enabled
         if features["export"]:
             export_text = f"Summary:\n{summary}\n\nResponse:\n{response}\n\nHighlights:\n{highlights}"
             pdf_buffer = BytesIO(export_pdf(export_text))
