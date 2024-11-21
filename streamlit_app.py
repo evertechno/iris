@@ -4,15 +4,14 @@ from io import BytesIO
 import json
 import matplotlib.pyplot as plt
 import re
-import time
 
 # Configure API Key securely from Streamlit's secrets
 genai.configure(api_key=st.secrets["GOOGLE_API_KEY"])
 
 # App Configuration
-st.set_page_config(page_title="Fast Email Storytelling AI", page_icon="📧", layout="wide")
-st.title("⚡ Lightning-Fast Email Storytelling AI")
-st.write("Rapidly extract insights and generate professional responses from emails.")
+st.set_page_config(page_title="Email Insights AI", page_icon="📧", layout="wide")
+st.title("⚡ Email Insights and RCA AI")
+st.write("Extract insights, root causes, and actionable steps from emails.")
 
 # Sidebar for Features
 st.sidebar.header("Settings")
@@ -20,35 +19,16 @@ features = {
     "sentiment": st.sidebar.checkbox("Perform Sentiment Analysis"),
     "highlights": st.sidebar.checkbox("Highlight Key Phrases"),
     "response": st.sidebar.checkbox("Generate Suggested Response"),
-    "export": st.sidebar.checkbox("Export Options"),
     "wordcloud": st.sidebar.checkbox("Generate Word Cloud"),
     "grammar_check": st.sidebar.checkbox("Grammar Check"),
-    "emotion_detection": st.sidebar.checkbox("Emotion Detection"),
     "key_phrases": st.sidebar.checkbox("Extract Key Phrases"),
     "actionable_items": st.sidebar.checkbox("Extract Actionable Items"),
-    # New Features for RCA and Insights
     "root_cause": st.sidebar.checkbox("Root Cause Detection"),
     "culprit_identification": st.sidebar.checkbox("Culprit Identification"),
     "trend_analysis": st.sidebar.checkbox("Trend Analysis"),
     "risk_assessment": st.sidebar.checkbox("Risk Assessment"),
     "severity_detection": st.sidebar.checkbox("Severity Detection"),
     "critical_keywords": st.sidebar.checkbox("Critical Keyword Identification"),
-    "contextual_insights": st.sidebar.checkbox("Contextual Insights"),
-    "stakeholder_analysis": st.sidebar.checkbox("Stakeholder Analysis"),
-    "decision_analysis": st.sidebar.checkbox("Decision Analysis"),
-    "dependencies_detection": st.sidebar.checkbox("Dependencies Detection"),
-    "fault_tree": st.sidebar.checkbox("Fault Tree Analysis"),
-    "suggestions_for_improvement": st.sidebar.checkbox("Suggestions for Improvement"),
-    "trend_comparison": st.sidebar.checkbox("Trend Comparison"),
-    "contradiction_detection": st.sidebar.checkbox("Contradiction Detection"),
-    "communication_flow": st.sidebar.checkbox("Communication Flow Evaluation"),
-    "goal_misalignment": st.sidebar.checkbox("Goal Misalignment Detection"),
-    "decision_confidence": st.sidebar.checkbox("Decision Confidence Level"),
-    "historical_reference": st.sidebar.checkbox("Historical Reference"),
-    "priority_levels": st.sidebar.checkbox("Priority Levels"),
-    "problem_framing": st.sidebar.checkbox("Problem Framing"),
-    "solution_suggestion_scoring": st.sidebar.checkbox("Solution Suggestion Scoring"),
-    "accountability_analysis": st.sidebar.checkbox("Accountability Analysis")
 }
 
 # Input Email Section
@@ -121,6 +101,43 @@ def extract_actionable_items(text):
     actions = [line for line in text.split("\n") if "to" in line.lower() or "action" in line.lower()]
     return actions
 
+# Root Cause Detection
+def detect_root_cause(text):
+    # Placeholder simple logic for root cause detection
+    return "Possible root cause: Lack of clear communication in the process."
+
+# Culprit Identification
+def identify_culprit(text):
+    # Placeholder logic for culprit identification
+    if "manager" in text.lower():
+        return "Culprit: The manager might be responsible."
+    elif "team" in text.lower():
+        return "Culprit: The team might be responsible."
+    return "Culprit: Unknown"
+
+# Trend Analysis
+def analyze_trends(text):
+    # Placeholder for trend analysis
+    return "Trend detected: Delay in project timelines."
+
+# Risk Assessment
+def assess_risk(text):
+    # Placeholder for risk analysis
+    return "Risk assessment: High risk due to delayed communication."
+
+# Severity Detection
+def detect_severity(text):
+    # Placeholder for severity detection
+    if "urgent" in text.lower():
+        return "Severity: High"
+    return "Severity: Normal"
+
+# Critical Keyword Identification
+def identify_critical_keywords(text):
+    critical_keywords = ["urgent", "problem", "issue", "failure"]
+    critical_terms = [word for word in text.split() if word.lower() in critical_keywords]
+    return critical_terms
+
 # Layout for displaying results
 if email_content and st.button("Generate Insights"):
     try:
@@ -144,11 +161,11 @@ if email_content and st.button("Generate Insights"):
         # Display Results
         st.subheader("AI Summary")
         st.write(summary)
-        
+
         if features["response"]:
             st.subheader("Suggested Response")
             st.write(response)
-        
+
         if features["highlights"]:
             st.subheader("Key Highlights")
             st.write(highlights)
@@ -175,6 +192,37 @@ if email_content and st.button("Generate Insights"):
             actionable_items = extract_actionable_items(email_content)
             st.subheader("Actionable Items")
             st.write(actionable_items)
+
+        # RCA and Insights Features
+        if features["root_cause"]:
+            root_cause = detect_root_cause(email_content)
+            st.subheader("Root Cause Detection")
+            st.write(root_cause)
+
+        if features["culprit_identification"]:
+            culprit = identify_culprit(email_content)
+            st.subheader("Culprit Identification")
+            st.write(culprit)
+
+        if features["trend_analysis"]:
+            trends = analyze_trends(email_content)
+            st.subheader("Trend Analysis")
+            st.write(trends)
+
+        if features["risk_assessment"]:
+            risk = assess_risk(email_content)
+            st.subheader("Risk Assessment")
+            st.write(risk)
+
+        if features["severity_detection"]:
+            severity = detect_severity(email_content)
+            st.subheader("Severity Detection")
+            st.write(severity)
+
+        if features["critical_keywords"]:
+            critical_terms = identify_critical_keywords(email_content)
+            st.subheader("Critical Keywords Identified")
+            st.write(critical_terms)
 
         # Export options
         if features["export"]:
